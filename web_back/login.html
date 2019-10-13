@@ -25,12 +25,48 @@
                 <i class="iconfont icon-key"></i>
                 <input type="text" class="input_txt" placeholder="邮箱/手机号">
                 <input type="password" class="input_pass" placeholder="密码">
-                <input type="submit" class="input_sub" value="登 录">
+                <!-- <input type="submit" class="input_sub" value="登 录"> -->
+                <!-- 登录是submit提交功能的，希望使用ajax，应当改为button按钮 -->
+                <!-- preventDafult()也可以阻止默认事件 -->
+                <input type="button" class="input_sub" value="登 录">
             </form>
         </div>
 
-    </div> 
+    </div>
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <script src="./tool/config.js"></script>
+    <script>
+        //    功能分析：点击登录按钮后，获取用户名和密码
+        //             判断是否为空
+        //             如果不为空，则提交给服务端
+        $('.input_sub').on('click', function() {
+            // 获取用户名和密码
+            var username = $('.input_txt').val();
+            var password = $('.input_pass').val();
+            // 判断是否为空
+            if (username.trim() == '' || password.trim() == '') {
+                alert('请输入完整~');
+            } else {
+                $.ajax({
+                    type: 'post',
+                    url: USER_LOGIN,
+                    data: {
+                        user_name: username,
+                        password: password
+                    },
+                    success: function(res) {
+                        // console.log(res);  {msg: "用户名或密码错误", code: 200}
+                        if (res.code === 200) {
+                            location.href = './index.html';
+                        } else {
+                            alert('用户名或密码错误~');
+                        }
+                    }
+                })
+            }
 
+        })
+    </script>
 </body>
 
 </html>
