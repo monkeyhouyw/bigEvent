@@ -22,48 +22,148 @@
         <div class="container-fluid common_con">
             <form class="form-horizontal article_form">
                 <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">用户名称：</label>
+                    <label for="username" class="col-sm-2 control-label">用户名称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="李思思">
+                        <input type="text" class="form-control" id="username" name='username' value="李思思">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">昵称：</label>
+                    <label for="nickname" class="col-sm-2 control-label">昵称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="思思">
+                        <input type="text" class="form-control" id="nickname" name='nickname' value="思思">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">邮箱：</label>
+                    <label for="email" class="col-sm-2 control-label">邮箱：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="lisisi@126.com">
+                        <input type="text" class="form-control" id="email" name='email' value="lisisi@126.com">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
+                    <label for="user_pic" class="col-sm-2 control-label">用户图标：</label>
                     <div class="col-sm-10">
-                        <img src="images/2.jpg" alt="" class="user_pic">
-                        <input type="file" id="exampleInputFile">
+                        <!-- 给img单独设置一个id：avatar -->
+                        <img src="images/2.jpg" alt="" class="user_pic" id='avatar'>
+                        <input type="file" id='user_pic' name='user_pic'>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">密码：</label>
+                    <label for="password" class="col-sm-2 control-label">密码：</label>
                     <div class="col-sm-4">
-                        <input type="password" class="form-control" id="inputEmail3" value="12345678">
+                        <input type="password" class="form-control" id="password" name='password' value="12345678">
                     </div>
                 </div>
 
 
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success">修改</button>
+                        <!-- <button type="submit" class="btn btn-success">修改</button> -->
+                        <button type="button" class="btn btn-success" id="submit">修改</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
+    <!--用于提示的模态框 Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+                </div>
+                <div class="modal-body">
+                    请填写完整~
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+                    <!-- <button type="button" class="btn btn-primary">确定修改</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 引入bootstrap的js文件 -->
+    <script src="./js/bootstrap/js/bootstrap.min.js"></script>
+    <!-- 引入配置文件，config.js和user.js -->
+    <script src="./tool/config.js"></script>
+    <script src="./tool/user.js"></script>
+    <script>
+        // 功能简介：
+        // 1、页面加载中请求用户的详细信息
+        // 2、将数据展示到对应元素中
+        //     为了方便进行元素获取和数据设置， 将标签下的id设置为与res.data属性名相同的值（ 方便遍历）
+        //        img 需要设置src， user_pic属性需要单独设置
+        //     为了后续使用FormData提交数据， 设置标签中name与res.data参数名相同
+        // 3、 点击修改按钮
+        //     检测内容是否填写完整
+        //  照片通过判断size或name
+        // 4、将数据通过formdata形式发送给服务端
+        // 5、保存完毕更新即可
+
+
+        // 1、获取详细信息
+        user.getuserinfo({
+                callback: function(res) {
+                    if (res.code === 200) {
+                        // 遍历res.data里参数
+                        $.each(res.data, function(k, value) {
+                            // 判断是不是图片参数
+                            if (k !== 'user_pic') {
+                                $('#' + k).val(value);
+                            } else {
+                                $('#avatar').prop('src', res.data.user_pic);
+                            }
+                        })
+                    }
+                }
+            })
+            ///2、点击修改按钮
+            // 修改按钮结构
+
+        $('#submit').on('click', function() {
+                var fd = new FormData($('form')[0]);
+                console.log(fd.get('username'));
+                console.log(fd.get('password'));
+                console.log(fd.get('nickname'));
+                console.log(fd.get('email'));
+                console.log(fd.get('user_pic'));
+                if (
+                    fd.get('username').trim() === '' ||
+                    fd.get('password').trim() === '' ||
+                    fd.get('nickname').trim() === '' ||
+                    fd.get('email').trim() === '' ||
+                    fd.get('user_pic').size === 0
+                ) {
+                    // 模态框显示
+                    $('#myModal').modal('show');
+                    return;
+                }
+                // console.log('发送请求');
+                user.editinfo({
+                    data: fd,
+                    callback: function(res) {
+                        // console.log(res);
+                        if (res.code === 200) {
+                            // 因为在主页中，此页面是通过iframe插入的，所以跳转时需要让他的父级跳转
+                            window.parent.location.href = './login.html';
+                        }
+
+                    }
+                })
+
+            })
+            // /3、本地图片预览
+        $('#user_pic').on('change', function() {
+            // 获取文件域中的文件信息
+            var tempFile = this.files[0];
+            // 生成临时图片地址
+            var tempSrc = URL.createObjectURL(tempFile);
+            // 将临时图片地址设置给#avatar
+            $('#avatar').prop('src', tempSrc);
+        })
+    </script>
 
 </body>
 

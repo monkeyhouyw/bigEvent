@@ -27,9 +27,27 @@ var user = ({
         $.ajax({
             url: USER_INFO,
             success: function(res) {
-                console.log(res);
+                // console.log(res);
                 // console.log(res.data);
+                options.callback(res);
             }
+        })
+    },
+    getuserinfo: function(options) {
+        $.ajax({
+            url: USER_INFO_GET,
+            success: options.callback
+        })
+    },
+    editinfo: function(options) {
+        $.ajax({
+            type: 'post',
+            url: USER_INFO_EDIT,
+            data: options.data,
+            // 用formdata必须添加两个属性
+            contentType: false,
+            processData: false,
+            success: options.callback
         })
     }
 })
