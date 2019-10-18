@@ -38,13 +38,14 @@
                     <li><a href="#">公 司</a></li>
                 </ul>
             </div>
+            <!-- 顶部的分类导航位置 -->
             <ul class="left_menu fl">
-                <li><a href="#">最 新</a></li>
+                <!-- <li><a href="#">最 新</a></li>
                 <li><a href="#">科 技</a></li>
                 <li><a href="#">股 市</a></li>
                 <li><a href="#">商 品</a></li>
                 <li><a href="#">外 汇</a></li>
-                <li><a href="#">公 司</a></li>
+                <li><a href="#">公 司</a></li> -->
             </ul>
             <ul class="right_menu fr">
                 <li><a href="#">科技专题</a></li>
@@ -55,8 +56,9 @@
 
     <div class="main_con clearfix">
         <div class="left_con">
+            <!-- 顶部的文章展示区域 -->
             <ul class="focus_list">
-                <li class="first">
+                <!-- <li class="first">
                     <a href="#"><img src="images/pic01.jpg" alt=""></a>
                     <p>图片说明</p>
                 </li>
@@ -75,7 +77,7 @@
                 <li>
                     <a href="#"><img src="images/pic06.jpg" alt=""></a>
                     <p>图片说明</p>
-                </li>
+                </li> -->
             </ul>
 
             <div class="common_title">
@@ -215,12 +217,58 @@
             <span>|</span>
             <a href="#">招聘人才</a>
             <span>|</span>
-            <a href="#">友情链接</a>		
+            <a href="#">友情链接</a>
         </div>
-        <p>CopyRight © 2019 深圳大事件信息技术股份有限公司   All Rights Reserved</p>
-        <p>电话：0755-****888    粤ICP备*******8号</p>
+        <p>CopyRight © 2019 深圳大事件信息技术股份有限公司 All Rights Reserved</p>
+        <p>电话：0755-****888 粤ICP备*******8号</p>
     </div>
+    <!-- 引入jQuery文件 -->
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <!-- 引入axios库文件 -->
+    <script src="./js/axios.min.js"></script>
+    <!-- 引入模板引擎文件 -->
+    <script src="./../web_back/js/template-web.js"></script>
+    <!-- 设置顶部文章模板 -->
+    <script type="text/html" id="article">
+        {{each data v i}}
+        <li {{if i===0}}class="first" {{/if}}>
+            <a href="#"><img src={{v.cover}} alt=""></a>
+            <p>{{v.title}}</p>
+        </li>
+        {{/each}}
+    </script>
+    <!-- 设置顶部分类导航模板 -->
+    <script type='text/html' id="category">
+        {{each data v}}
+        <li><a href="./list.html?id={{v.id}}">{{v.name}}</a></li>
+        {{/each}}
 
+    </script>
+    <script>
+        axios({
+                method: 'get',
+                url: 'http://localhost:8000/admin/search',
+                params: {
+                    perpage: 5
+                }
+            })
+            .then(function(res) {
+                var res = res.data;
+                console.log(res);
+                var htmlStr = template('article', res);
+                $('.focus_list').html(htmlStr);
+            })
+        axios({
+                url: 'http://localhost:8000/admin/category_search',
+            })
+            .then(function(res) {
+                var res = res.data;
+                if (res.code === 200) {
+                    var htmlStr = template('category', res);
+                    $('.left_menu').html(htmlStr)
+                }
+            })
+    </script>
 </body>
 
 </html>

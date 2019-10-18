@@ -124,11 +124,11 @@
 
         $('#submit').on('click', function() {
                 var fd = new FormData($('form')[0]);
-                console.log(fd.get('username'));
-                console.log(fd.get('password'));
-                console.log(fd.get('nickname'));
-                console.log(fd.get('email'));
-                console.log(fd.get('user_pic'));
+                // console.log(fd.get('username'));
+                // console.log(fd.get('password'));
+                // console.log(fd.get('nickname'));
+                // console.log(fd.get('email'));
+                // console.log(fd.get('user_pic'));
                 if (
                     fd.get('username').trim() === '' ||
                     fd.get('password').trim() === '' ||
@@ -147,7 +147,7 @@
                         // console.log(res);
                         if (res.code === 200) {
                             // 因为在主页中，此页面是通过iframe插入的，所以跳转时需要让他的父级跳转
-                            window.parent.location.href = './login.html';
+                            parent.location.href = './login.html';
                         }
 
                     }

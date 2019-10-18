@@ -32,7 +32,7 @@ var ART_DEL = baseUrl + '/admin/article_delete';
 
 
 // 文章类别搜索
-var arttypesearch = baseUrl + '/admin/category_search';
+var TYPE_SEARCH = baseUrl + '/admin/category_search';
 // 新增文章类别
 var ART_TYPE_ADD = baseUrl + '/admin/category_add';
 // 编辑文章类别

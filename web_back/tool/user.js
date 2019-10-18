@@ -49,5 +49,11 @@ var user = ({
             processData: false,
             success: options.callback
         })
+    },
+    getCate: function(options) {
+        $.ajax({
+            url: TYPE_SEARCH,
+            success: options.callback
+        })
     }
 })

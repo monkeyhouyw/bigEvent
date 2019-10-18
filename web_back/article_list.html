@@ -22,17 +22,21 @@
             <div class="row opt_btns">
                 <div class="col-xs-6">
                     <form class="form-inline">
+                        <!-- 分类筛选的下拉菜单 -->
                         <select id="selCategory" name="" class="form-control input-sm">
-                            <option>所有分类</option>
-                            <option>未分类</option>
+                            <!-- 下拉菜单选项如果没设置，提交的是Option标签中的内容，设置空也是设置 -->
+                            <!-- 如果设置了value,一定提交的是value的内容 -->
+                            <option value="">所有分类</option>
+                            <!-- <option>未分类</option>
                             <option>奇趣事</option>
                             <option>会生活</option>
-                            <option>爱旅行</option>
+                            <option>爱旅行</option> -->
                         </select>
+                        <!-- 状态筛选下的下拉菜单 -->
                         <select id="selStatus" name="" class="form-control input-sm">
-                            <option>所有状态</option>
-                            <option value="drafted">草稿</option>
-                            <option value="published">已发布</option>
+                            <option value="">所有状态</option>
+                            <option value="草稿">草稿</option>
+                            <option value="已发布">已发布</option>
                         </select>
                         <button id="btnSearch" class="btn btn-default btn-sm">筛选</button>
                     </form>
@@ -57,7 +61,7 @@
 
 
 
-                    <tr>
+                    <!-- <tr>
                         
                         <td>王积千造统最头</td>
                         <td>杰克</td>
@@ -243,38 +247,165 @@
                             <a href="post-edit.html?id=995" class="btn btn-default btn-xs">编辑</a>
                             <a href="javascript:deleteTr( 995 );" class="btn btn-danger btn-xs">删除</a>
                         </td>
-                    </tr>
+                    </tr> -->
 
 
                 </tbody>
             </table>
-
+            <!-- 分页结构 -->
             <div class="row text-center">
-            <ul class="pagination pagination-sm">
-                <li class="page-item first disabled"><a href="#" class="page-link">首页</a></li>
-                <li class="page-item prev disabled"><a href="#" class="page-link">上一页</a></li>
-                <li class="page-item active"><a href="#" class="page-link">1</a></li>
-                <li class="page-item"><a href="#" class="page-link">2</a></li>
-                <li class="page-item"><a href="#" class="page-link">3</a></li>
-                <li class="page-item"><a href="#" class="page-link">4</a></li>
-                <li class="page-item"><a href="#" class="page-link">5</a></li>
-                <li class="page-item"><a href="#" class="page-link">6</a></li>
-                <li class="page-item"><a href="#" class="page-link">7</a></li>
-                <li class="page-item next"><a href="#" class="page-link">下一页</a></li>
-                <li class="page-item last"><a href="#" class="page-link">尾页</a></li>
-            </ul>
-        </div>
+                <ul class="pagination pagination-sm">
+                    <li class="page-item first disabled"><a href="#" class="page-link">首页</a></li>
+                    <li class="page-item prev disabled"><a href="#" class="page-link">上一页</a></li>
+                    <li class="page-item active"><a href="#" class="page-link">1</a></li>
+                    <li class="page-item"><a href="#" class="page-link">2</a></li>
+                    <li class="page-item"><a href="#" class="page-link">3</a></li>
+                    <li class="page-item"><a href="#" class="page-link">4</a></li>
+                    <li class="page-item"><a href="#" class="page-link">5</a></li>
+                    <li class="page-item"><a href="#" class="page-link">6</a></li>
+                    <li class="page-item"><a href="#" class="page-link">7</a></li>
+                    <li class="page-item next"><a href="#" class="page-link">下一页</a></li>
+                    <li class="page-item last"><a href="#" class="page-link">尾页</a></li>
+                </ul>
+            </div>
 
         </div>
     </div>
-
+    <!-- 页面功能，忽略即可 -->
     <script>
         // 设置左侧菜单
-        $('#release_btn').click(function(){
-            window.parent.setMenu(1,1);
+        $('#release_btn').click(function() {
+            window.parent.setMenu(1, 1);
         })
     </script>
+    <!-- 引入配置文件 -->
+    <script src="./tool/config.js"></script>
+    <script src="./tool/article.js"></script>
+    <!-- 引入模板引擎文件 -->
+    <script src="./js/template-web.js"></script>
 
+    <!-- 引入jQuery分页插件文件 -->
+    <script src="./js/jquery.twbsPagination.js"></script>
+    <!-- 设置文章信息模板 -->
+    <script type="text/html" id="article">
+        {{each data v}}
+        <tr>
+
+            <td>{{v.title}}</td>
+            <td>{{v.author}}</td>
+            <td>{{v.type}}</td>
+            <td class="text-center">{{v.date}}</td>
+
+
+            <td class="text-center">{{v.state}}</td>
+
+
+            <td class="text-center">
+                <a href="post-edit.html?id=995" class="btn btn-default btn-xs">编辑</a>
+                <a href="javascript:deleteTr( 995 );" class="btn btn-danger btn-xs">删除</a>
+            </td>
+        </tr>
+        {{/each}}
+    </script>
+    <!-- 设置分类下拉菜单选项模板 -->
+    <script type="text/html" id="category">
+        {{each data v}}
+        <option value="{{v.id}}">{{v.name}}</option>
+        {{/each}}
+    </script>
+    <script>
+        var myTotalPage; // 用来保存当前的总页数，无需设置初始值，因为不知道到底有多少页
+        var myPage = 1;
+        // 用来保存当前页码
+
+        // 功能1：将数据显示到页面
+        getArticle();
+
+        //    功能2：筛选功能
+        // 2、1请求服务端接口，获取文章分类信息（可以使用文章分类中的getCate)
+        article.getCate({
+                callback: function(res) {
+                    if (res.code === 200) {
+                        // console.log(res);
+                        // 2、2通过模板生成分类下拉菜单的选项
+                        var htmlStr = template('category', res);
+                        $('#selCategory').append(htmlStr);
+                    }
+                }
+            })
+            // 2.2给筛选按钮设置点击事件
+            //   筛选按钮是submit按钮，可以在源代码中改为普通按钮或阻止默认行为
+        $('#btnSearch').on('click', function(e) {
+            // 阻止默认提交
+            e.preventDefault();
+            $('.first').click();
+            getArticle();
+        })
+
+        function getArticle() {
+            $.ajax({
+                url: 'http://localhost:8000/admin/search',
+                data: {
+                    type: $('#selCategory').val(),
+                    state: $('#selStatus').val(),
+                    page: myPage
+                },
+                success: function(res) {
+                    // console.log(res);
+                    if (res.code === 200) {
+                        var htmlStr = template('article', res);
+                        $('tbody').html(htmlStr);
+
+                        // 功能3：分页功能 
+                        // 进行分页功能设置的时机： 
+                        // 页面初次加载时，请求数据后获取到总页数，进行分页结构创建 
+                        // 进行了筛选操作后，请求的数据的总页数有变化，重新生成分页结构 
+                        // - 如果需要重新设置分页结构，旧的分页结构应当删除（排他思想） 
+                        // -删除旧的结构： 某元素.twbsPagination('destory') 
+                        // 3.1通过变量保存总页数 
+                        // totalPage为响应的参数中自带的 
+                        var totalPages = res.totalPage;
+                        // console.log(totalPages);
+
+
+
+                        // 3.2 检测当前页数和上一次的页数是否一致，如果一致，无需进行重新创建
+                        //   - 可以通过全局变量保存每次的页数，方便请求中进行检测
+                        if (totalPages === myTotalPage) {
+                            // - 如果上一次和当前的总页数一致，同时上一次又点击了除1以外的其他页码
+                            //   - 会导致页码无法更新为1，所以就不进行改进了
+                            return;
+                        }
+                        //  - 如果页数不同，将当前的最新页号设置给全局变量myTotalPage保存
+                        myTotalPage = totalPages;
+
+
+                        // 3.3根据总页数和其他选项设置分页功能 
+                        // 先删除旧的，再设置新的 
+                        $('.pagination').twbsPagination('destroy');
+                        $('.pagination').twbsPagination({
+                            totalPages: totalPages, //总页数 
+                            visiblePages: 5,
+                            first: '首页',
+                            last: '尾页',
+                            prev: '上一页',
+                            next: '下一页',
+                            onPageClick: function(event, page) {
+                                // page代表当前点击的页码，数值类型
+                                console.log(page);
+
+                                // 如果希望获取服务端与page对应页的数据，需要给请求多设置page参数
+                                //   - 除了参数以外，其他的请求操作没有区别，直接调用当前函数即可
+                                //   - 如果希望page可以在外面的请求操作中可以获取，应当设置为全局变量
+                                myPage = page;
+                                getArticle();
+                            }
+                        })
+                    }
+                }
+            })
+        }
+    </script>
 </body>
 
 </html>
